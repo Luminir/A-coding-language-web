@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -29,5 +30,20 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .top-navbar{
+    @apply bg-green-300 w-full h-16 flex items-center justify-between absolute gap-2 border-[2px] border-black  border-r-8 border-b-8;
+  }
+  .widget{
+    @apply rounded-3xl gap-y-5 border-2 border-black border-r-8 border-b-8;
+  }
+  .orbitron {
+    font-family: "Orbitron", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-size: larger;
+    color:blueviolet;
+    padding-top: 0.5rem;
   }
 }
