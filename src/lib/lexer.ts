@@ -96,35 +96,51 @@ export type Token = {
 
 export class Lexer {
   private input: string;
-  private currentCharIndex: number = 0;
+  private position: number = 0;
 
   constructor(input: string) {
     this.input = input;
   }
 
-  public tokenize(): Token[] {
+  tokenize(): Token[] {
     const tokens: Token[] = [];
-    while (this.currentCharIndex < this.input.length) {
-      const char = this.input[this.currentCharIndex];
+    const tokenTypes = [
+      { regex: /^\d+/, type: "NUMBER" },
+      { regex: /^Able\b/, type: "KEYWORD" }, // Recognize 'Able' as a keyword
+      { regex: /^CuCu\b/, type: "KEYWORD" }, // Recognize 'CuCu' as a keyword
+      { regex: /^[a-zA-Z_]\w*/, type: "IDENTIFIER" },
+      { regex: /^=/, type: "EQUAL" },
+      { regex: /^\(/, type: "LPAREN" },
+      { regex: /^\)/, type: "RPAREN" },
+      { regex: /^;/, type: "SEMICOLON" },
+      { regex: /^\+/, type: "PLUS" },
+      { regex: /^-/, type: "MINUS" },
+    ];
 
-      if (/\d/.test(char)) {
-        let number = '';
-        while (/\d/.test(this.input[this.currentCharIndex])) {
-          number += this.input[this.currentCharIndex];
-          this.currentCharIndex++;
+    while (this.position < this.input.length) {
+      const str = this.input.slice(this.position);
+
+      let matched = false;
+
+      for (const { regex, type } of tokenTypes) {
+        const match = str.match(regex);
+        if (match) {
+          tokens.push({ type, value: match[0] });
+          this.position += match[0].length;
+          matched = true;
+          break;
         }
-        tokens.push({ type: 'NUMBER', value: number });
-        continue;
       }
 
-      if (char === '+') {
-        tokens.push({ type: 'PLUS', value: char });
-      } else if (char === '-') {
-        tokens.push({ type: 'MINUS', value: char });
+      if (!matched) {
+        if (str[0].trim() === "") {
+          this.position++; // Skip whitespace
+        } else {
+          throw new Error(`Unexpected character: ${str[0]}`);
+        }
       }
-
-      this.currentCharIndex++;
     }
+
     return tokens;
   }
 }

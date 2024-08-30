@@ -1,17 +1,18 @@
-'use client'
+// src/app/lang-compiler/page.tsx
+'use client';
 
 import React, { useState } from 'react';
-import { interpretCode, compileCode } from '../../lib'; // Import from index.ts
+import { interpretCode, compileCode } from '../../lib'; // Adjust the path to match your project structure
 
 const LangCompilerPage = () => {
-  const [code, setCode] = useState('2 + 2');
+  const [code, setCode] = useState('Able x = 342; CuCu(x);');
   const [interpretationResult, setInterpretationResult] = useState('');
   const [compiledCode, setCompiledCode] = useState('');
 
   const handleRun = () => {
     try {
       const interpretedOutput = interpretCode(code); // Interpret the code
-      setInterpretationResult(interpretedOutput.toString());
+      setInterpretationResult(interpretedOutput ? interpretedOutput.toString() : '');
       
       const compiledOutput = compileCode(code); // Compile the code
       setCompiledCode(compiledOutput);
@@ -22,15 +23,8 @@ const LangCompilerPage = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Simple Language Compiler</h1>
-      <textarea
-        rows={5}
-        cols={40}
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        style={{ display: 'block', marginBottom: '10px' }}
-      ></textarea>
+    <div>
+      <textarea value={code} onChange={(e) => setCode(e.target.value)} rows={5} cols={40} />
       <button onClick={handleRun}>Run Code</button>
       <h2>Interpreted Result:</h2>
       <pre>{interpretationResult}</pre>
