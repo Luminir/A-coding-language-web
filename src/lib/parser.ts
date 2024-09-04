@@ -22,8 +22,10 @@ export class Parser {
       const token = this.tokens[this.current];
 
       if (token.type === "KEYWORD" && token.value === "Able") {
+        console.log("Parsing variable declaration Able");
         return this.parseVariableDeclaration();
       } else if (token.type === "KEYWORD" && token.value === "CuCu") {
+        console.log("Parsing variable declaration CucCU");
         return this.parsePrintStatement();
       } else if (token.type === "NUMBER" || token.type === "IDENTIFIER") {
         return this.parseExpression();
@@ -49,35 +51,38 @@ export class Parser {
 
   private parsePrintStatement(): ASTNode {
     this.current++; // Move past 'CuCu'
-    this.expectToken("LPAREN"); // Expect '('
-    const expression = this.parseExpression();
-    this.expectToken("RPAREN"); // Expect ')'
+    const expression = this.parseExpression(); // Directly parse the expression
     this.expectToken("SEMICOLON"); // Expect a semicolon
-
+  
     return {
       type: "PrintStatement",
       left: expression,
     };
   }
+  
 
   private parseExpression(): ASTNode {
     const token = this.tokens[this.current];
     this.current++;
-
+  
     if (token.type === "NUMBER") {
       return {
         type: "NumberLiteral",
-        value: Number(token.value),
+        value: token.value,
       };
-    } else if (token.type === "IDENTIFIER") {
+    } else if (token.type === "STRING") { // Handle strings
+      return {
+        type: "StringLiteral",
+        value: token.value.slice(1, -1), // Remove surrounding `#`
+      };
+    } else {
       return {
         type: "Identifier",
         value: token.value,
       };
-    } else {
-      throw new Error(`Unexpected token type: ${token.type}`);
     }
   }
+  
 
   private expectToken(expectedType: string): void {
     const token = this.tokens[this.current];

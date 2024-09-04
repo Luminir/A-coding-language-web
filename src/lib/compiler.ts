@@ -5,6 +5,9 @@ export class Compiler {
     switch (node.type) {
       case 'NumberLiteral':
         return node.value!.toString();
+      case 'StringLiteral': // Compile string literals
+      console.log("Compiling node type:", node.type, "resulting in:");
+        return `"${node.value}"`;
       case 'BinaryExpression':
         const left = this.compile(node.left!);
         const right = this.compile(node.right!);
@@ -20,5 +23,5 @@ export class Compiler {
       default:
         throw new Error(`Unknown node type: ${node.type}`);
     }
-  }
+  }  
 }

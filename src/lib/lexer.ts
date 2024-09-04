@@ -96,51 +96,59 @@ export type Token = {
 
 export class Lexer {
   private input: string;
-  private position: number = 0;
+  private position: number;
 
   constructor(input: string) {
     this.input = input;
+    this.position = 0;
+  }
+
+  private tokenTypes = [
+    { regex: /^\d+/, type: "NUMBER" },
+    { regex: /^Able\b/, type: "KEYWORD" },
+    { regex: /^CuCu\b/, type: "KEYWORD" },
+    { regex: /^[a-zA-Z_]\w*/, type: "IDENTIFIER" },
+    { regex: /^=/, type: "EQUAL" },
+    { regex: /^\+/, type: "PLUS" },
+    { regex: /^-/, type: "MINUS" },
+    { regex: /^;/, type: "SEMICOLON" },
+    { regex: /^#([^#]*)#/, type: "STRING" },
+    { regex: /^\(/, type: "LEFT_PAREN" },
+    { regex: /^\)/, type: "RIGHT_PAREN" }
+  ];
+
+  getNextToken(): Token | null {
+    while (this.position < this.input.length) {
+      const str = this.input.slice(this.position);
+
+      for (const { regex, type } of this.tokenTypes) {
+        const match = regex.exec(str);
+        if (match) {
+          this.position += match[0].length;
+          return { type, value: match[0] };
+        }
+      }
+
+      if (str[0] === " ") {
+        this.position++; // Skip whitespace
+      } else {
+        throw new Error(`Unexpected character: ${str[0]} at position ${this.position}`);
+      }
+    }
+
+    return null; // End of input
   }
 
   tokenize(): Token[] {
     const tokens: Token[] = [];
-    const tokenTypes = [
-      { regex: /^\d+/, type: "NUMBER" },
-      { regex: /^Able\b/, type: "KEYWORD" }, // Recognize 'Able' as a keyword
-      { regex: /^CuCu\b/, type: "KEYWORD" }, // Recognize 'CuCu' as a keyword
-      { regex: /^[a-zA-Z_]\w*/, type: "IDENTIFIER" },
-      { regex: /^=/, type: "EQUAL" },
-      { regex: /^\(/, type: "LPAREN" },
-      { regex: /^\)/, type: "RPAREN" },
-      { regex: /^;/, type: "SEMICOLON" },
-      { regex: /^\+/, type: "PLUS" },
-      { regex: /^-/, type: "MINUS" },
-    ];
+    let token = this.getNextToken();
 
-    while (this.position < this.input.length) {
-      const str = this.input.slice(this.position);
-
-      let matched = false;
-
-      for (const { regex, type } of tokenTypes) {
-        const match = str.match(regex);
-        if (match) {
-          tokens.push({ type, value: match[0] });
-          this.position += match[0].length;
-          matched = true;
-          break;
-        }
-      }
-
-      if (!matched) {
-        if (str[0].trim() === "") {
-          this.position++; // Skip whitespace
-        } else {
-          throw new Error(`Unexpected character: ${str[0]}`);
-        }
-      }
+    while (token) {
+      tokens.push(token);
+      token = this.getNextToken();
     }
 
     return tokens;
   }
 }
+
