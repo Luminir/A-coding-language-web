@@ -124,6 +124,7 @@ export class Lexer {
       for (const { regex, type } of this.tokenTypes) {
         const match = regex.exec(str);
         if (match) {
+          console.log(`Tokenized: ${match[0]} as ${type}`);
           this.position += match[0].length;
           return { type, value: match[0] };
         }

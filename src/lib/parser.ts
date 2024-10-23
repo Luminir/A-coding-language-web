@@ -1,4 +1,3 @@
-// src/lib/parser.ts
 import { Token } from './lexer';
 
 export interface ASTNode {
@@ -25,7 +24,7 @@ export class Parser {
         console.log("Parsing variable declaration Able");
         return this.parseVariableDeclaration();
       } else if (token.type === "KEYWORD" && token.value === "CuCu") {
-        console.log("Parsing variable declaration CucCU");
+        console.log("Parsing print statement CuCu");
         return this.parsePrintStatement();
       } else if (token.type === "NUMBER" || token.type === "IDENTIFIER") {
         return this.parseExpression();
@@ -59,12 +58,34 @@ export class Parser {
       left: expression,
     };
   }
-  
 
   private parseExpression(): ASTNode {
+    let left = this.parsePrimary();
+
+    while (this.current < this.tokens.length) {
+      const token = this.tokens[this.current];
+
+      if (token.type === "PLUS" || token.type === "MINUS") {
+        this.current++;
+        const right = this.parsePrimary();
+        left = {
+          type: "BinaryExpression",
+          left,
+          right,
+          value: token.value
+        };
+      } else {
+        break;
+      }
+    }
+
+    return left;
+  }
+
+  private parsePrimary(): ASTNode {
     const token = this.tokens[this.current];
     this.current++;
-  
+
     if (token.type === "NUMBER") {
       return {
         type: "NumberLiteral",
@@ -82,7 +103,6 @@ export class Parser {
       };
     }
   }
-  
 
   private expectToken(expectedType: string): void {
     const token = this.tokens[this.current];
@@ -93,3 +113,4 @@ export class Parser {
     }
   }
 }
+
