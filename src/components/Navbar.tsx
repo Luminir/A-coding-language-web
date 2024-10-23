@@ -41,8 +41,8 @@ const Navbar = () => {
   }
   
   return (
-    <header className=" w-full h-16 sticky top-0 z-20">
-        <nav className=" top-navbar">
+    <header className=" w-full h-16 sticky top-0 z-50">
+        <nav className=" top-navbar relative z-50">
           <div className=" flex items-center ">
           <Image src={logoIcon} 
             width={50} 
@@ -51,7 +51,7 @@ const Navbar = () => {
             className=" pb-2"/>
             <h1 className=" orbitron">Luminir.js</h1>
           </div>
-            <div className={` bg-blue-300 font-semibold gap-10 py-2 px-5
+            <div className={` font-semibold gap-10 py-2 px-5 bg-white
              md:flex ${menuOpen ? 'absolute flex flex-col top-[62px] right-0 text-center p-5 border-black border-2 border-r-4 border-b-4 md': 'hidden'}`}>
             <a 
             href="/" 
